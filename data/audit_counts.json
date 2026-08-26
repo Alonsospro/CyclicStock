@@ -1,0 +1,46 @@
+{
+  "logs": [
+    {
+      "id": "AUD-1300-367883",
+      "centro": "1300",
+      "timestamp": "2026-08-26 20:16:07",
+      "sku": "JD_15945",
+      "description": "",
+      "location": "",
+      "systemStock": 0,
+      "physicalStock": 15,
+      "previousStock": null,
+      "type": "PRIMER_CONTEO",
+      "isRecount": false,
+      "variance": 15,
+      "unitCost": 0,
+      "varianceCost": 0,
+      "status": "Sobrante",
+      "counterName": "JHAMIL CADIMA",
+      "counterUser": "JHAMIL CADIMA",
+      "counterRole": "AUXILIAR",
+      "notes": "Conteo verificado en turno mañana"
+    },
+    {
+      "id": "AUD-1300-012927",
+      "centro": "1300",
+      "timestamp": "2026-08-26 20:10:12",
+      "sku": "JD_15945",
+      "description": "",
+      "location": "",
+      "systemStock": 0,
+      "physicalStock": 15,
+      "previousStock": null,
+      "type": "PRIMER_CONTEO",
+      "isRecount": false,
+      "variance": 15,
+      "unitCost": 0,
+      "varianceCost": 0,
+      "status": "Sobrante",
+      "counterName": "JHAMIL CADIMA",
+      "counterUser": "JHAMIL CADIMA",
+      "counterRole": "AUXILIAR",
+      "notes": "Conteo verificado en turno mañana"
+    }
+  ]
+}
