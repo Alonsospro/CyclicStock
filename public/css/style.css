@@ -69,6 +69,9 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  /* Prevent 300ms touch delay on all elements */
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -83,6 +86,33 @@ body {
   background-image: 
     radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
     radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.05) 0%, transparent 40%);
+  /* Prevent overscroll/bounce interfering with touch events on iOS */
+  overscroll-behavior: none;
+}
+
+/* =========================================================================
+   UNIVERSAL MOBILE TOUCH FIXES
+   ========================================================================= */
+
+/* Fast touch response on all interactive elements - eliminates 300ms delay */
+a, button, input, select, textarea,
+[role="button"], [tabindex],
+label[for], .btn, .btn-camera-ctrl, .btn-shutter-main,
+.popover-item, .tab-btn, .nav-btn, .icon-btn,
+.count-input-rapid, .quick-count-input, .quick-damaged-input {
+  touch-action: manipulation;
+}
+
+/* Remove iOS blue tap flash on all clickable elements */
+button, a, input, select, label, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Inputs and textareas should still allow text selection */
+input, textarea, select {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .app-container {
@@ -1379,6 +1409,10 @@ body {
   transition: var(--transition);
   text-decoration: none;
   white-space: nowrap;
+  /* Mobile: eliminate 300ms delay and ensure 44px minimum tap target */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 44px;
 }
 
 .btn-primary {
@@ -1469,12 +1503,17 @@ body {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 20px;
+  /* Ensure touch events work correctly through the overlay on mobile */
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-card {
@@ -1933,6 +1972,13 @@ body {
    DEDICATED FULL-SCREEN LOGIN VIEW (PANTALLA ÚNICA)
    ========================================================================== */
 .login-screen-view {
+  /* Fixed positioning ensures it covers exactly the viewport and doesn't
+     allow underlying #appContainer to receive any touch events */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   min-height: 100vh;
   min-height: 100dvh;
   width: 100%;
@@ -1941,7 +1987,6 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 20px 16px 28px;
-  position: relative;
   background-color: var(--bg-base);
   background-image: 
     radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 45%),
@@ -1949,8 +1994,9 @@ body {
     radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.04) 0%, transparent 60%);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  z-index: 100;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  overscroll-behavior: contain;
+  z-index: 9000;
+  touch-action: pan-y;
 }
 
 .login-screen-view.hidden {
@@ -2736,17 +2782,18 @@ body.role-auxiliar .admin-only {
 
 .quick-count-input {
   width: 85px;
-  height: 38px;
+  height: 44px; /* Min 44px for iOS touch target compliance */
   background: var(--bg-surface);
   border: 2px solid var(--border-subtle);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font-family: var(--font-mono);
-  font-size: 1.1rem;
+  font-size: 1.1rem; /* >=16px prevents iOS auto-zoom */
   font-weight: 700;
   text-align: center;
   outline: none;
   transition: var(--transition);
+  touch-action: manipulation;
 }
 
 .quick-count-input:focus {
@@ -4918,17 +4965,18 @@ body.role-auxiliar .admin-only {
    ========================================================================== */
 .quick-damaged-input {
   width: 78px;
-  height: 38px;
+  height: 44px; /* Min 44px for iOS touch target compliance */
   background: var(--bg-surface);
   border: 2px solid var(--border-subtle);
   border-radius: var(--radius-md);
   color: #f59e0b;
   font-family: var(--font-mono);
-  font-size: 1.05rem;
+  font-size: 1.05rem; /* >=16px prevents iOS auto-zoom */
   font-weight: 700;
   text-align: center;
   outline: none;
   transition: var(--transition);
+  touch-action: manipulation;
 }
 
 .quick-damaged-input:focus {
@@ -7297,6 +7345,74 @@ body.role-auxiliar .admin-only {
   }
   .location-input {
     font-size: 0.9rem;
+  }
+}
+
+/* ==========================================================================
+   MOBILE TOUCH & INTERACTION COMPATIBILITY (ALL DEVICES)
+   ========================================================================== */
+
+/* Table horizontal scroll on mobile - enable smooth touch scrolling */
+.table-responsive, .inventory-table-wrapper, [class*="table-wrap"] {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+/* Minimum 44px tap targets for all interactive controls */
+.icon-btn,
+.btn-toggle-pwd,
+.modal-close,
+.tab-btn,
+.btn-camera-ctrl,
+.btn-confirm-count,
+.btn-damaged-photo,
+.btn-step,
+.popover-item,
+.login-theme-toggle {
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Tab navigation - wider tap targets */
+.main-tabs-nav .tab-btn {
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+/* form-control inputs - ensure font-size >= 16px to prevent iOS auto-zoom */
+@media (max-width: 768px) {
+  input.form-control,
+  select.form-control,
+  textarea.form-control,
+  .form-control,
+  .login-input,
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="email"],
+  select {
+    font-size: 16px !important; /* CRITICAL: prevents iOS auto-zoom on focus */
+  }
+
+  /* Slightly smaller inputs allowed if they maintain font-size */
+  .quick-count-input,
+  .quick-damaged-input {
+    font-size: 16px !important;
+  }
+
+  /* Ensure table cells have adequate touch size */
+  .cell-action,
+  .cell-evidence,
+  .cell-count {
+    padding: 4px 2px;
+  }
+
+  /* Prevent double-tap zoom on table rows */
+  .inventory-table tr,
+  .inventory-table td {
+    touch-action: manipulation;
   }
 }
 
