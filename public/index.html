@@ -134,13 +134,18 @@
 
     <!-- TOP NAVIGATION BAR -->
     <header class="top-navbar">
+      <!-- ==============================================
+           NIBOL LOGO ANIMADO (Clean Transparent Logo Only)
+           ============================================== -->
       <div class="brand-section">
-        <div class="brand-logo">
-          <i class="fa-solid fa-boxes-stacked"></i>
-        </div>
-        <div class="brand-info">
-          <h1 class="brand-title">CyclicStock <span>PRO</span></h1>
-          <p class="brand-subtitle">Inventarios Cíclicos &bull; Sincronización Excel en Vivo</p>
+        <div id="nibol-web-logo-container" class="nibol-navbar-logo-card" title="Red de Marcas NIBOL • Clic para alternar">
+          <!-- Ambient Glow Effect -->
+          <div class="nibol-logo-glow" id="nibolLogoGlow"></div>
+
+          <!-- Pure Clean Logo Container -->
+          <div id="nibol-morph-slot" class="nibol-morph-slot">
+            <div id="brand-logo-target" class="brand-logo-target"></div>
+          </div>
         </div>
       </div>
 
@@ -2411,6 +2416,142 @@
 
   <!-- Main Application Script -->
   <script src="js/app.js"></script>
+
+  <!-- NIBOL Clean Brand Logo Rotator (Pure Transparent Logos, Zero Text) -->
+  <script>
+  (function() {
+    const brands = [
+      {
+        name: "NIBOL",
+        img: "img/brands/nibol.svg",
+        glow: "rgba(59, 130, 246, 0.32)"
+      },
+      {
+        name: "John Deere",
+        img: "img/brands/john-deere.svg",
+        glow: "rgba(54, 124, 43, 0.35)"
+      },
+      {
+        name: "Volvo Trucks",
+        img: "img/brands/volvo.svg",
+        glow: "rgba(96, 165, 250, 0.30)"
+      },
+      {
+        name: "Mack Trucks",
+        img: "img/brands/mack.svg",
+        glow: "rgba(245, 158, 11, 0.30)"
+      },
+      {
+        name: "Foton Motor",
+        img: "img/brands/foton.svg",
+        glow: "rgba(0, 163, 224, 0.30)"
+      },
+      {
+        name: "UD Trucks",
+        img: "img/brands/ud-trucks.svg",
+        glow: "rgba(239, 68, 68, 0.30)"
+      },
+      {
+        name: "Wirtgen Group",
+        img: "img/brands/wirtgen.svg",
+        glow: "rgba(56, 189, 248, 0.30)"
+      }
+    ];
+
+    // Preload brand vector logos in background for instant switching
+    brands.forEach(b => {
+      if (b.img) {
+        const pre = new Image();
+        pre.src = b.img;
+      }
+    });
+
+    let current = 0;
+    let timer = null;
+    let isTransitioning = false;
+
+    function initNibolRotator() {
+      const container = document.getElementById("nibol-web-logo-container");
+      const slot = document.getElementById("nibol-morph-slot");
+      const logoEl = document.getElementById("brand-logo-target");
+      const glowEl = document.getElementById("nibolLogoGlow");
+
+      if (!slot || !logoEl) return;
+
+      function renderBrand(index, immediate) {
+        if (isTransitioning && !immediate) return;
+        const b = brands[index];
+        if (!b) return;
+
+        if (immediate) {
+          applyBrandData(b);
+          return;
+        }
+
+        isTransitioning = true;
+        slot.classList.remove("morphing-in");
+        slot.classList.add("morphing-out");
+
+        setTimeout(() => {
+          applyBrandData(b);
+          slot.classList.remove("morphing-out");
+          slot.classList.add("morphing-in");
+          setTimeout(() => {
+            slot.classList.remove("morphing-in");
+            isTransitioning = false;
+          }, 300);
+        }, 180);
+      }
+
+      function applyBrandData(b) {
+        logoEl.innerHTML = `<img src="${b.img}" alt="${b.name}" class="brand-pure-logo">`;
+        if (container) {
+          container.title = `${b.name} • Red de Marcas Oficiales NIBOL (Clic para alternar)`;
+        }
+        if (glowEl && b.glow) {
+          glowEl.style.background = `radial-gradient(circle at 50% 50%, ${b.glow}, transparent 70%)`;
+        }
+      }
+
+      function nextBrand() {
+        current = (current + 1) % brands.length;
+        renderBrand(current, false);
+      }
+
+      function startTimer() {
+        if (timer) clearInterval(timer);
+        timer = setInterval(nextBrand, 3200);
+      }
+
+      function stopTimer() {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+
+      // Initial render
+      renderBrand(0, true);
+      startTimer();
+
+      // Interactive controls
+      if (container) {
+        container.addEventListener("mouseenter", stopTimer);
+        container.addEventListener("mouseleave", startTimer);
+        container.addEventListener("click", () => {
+          nextBrand();
+          startTimer();
+        });
+      }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initNibolRotator);
+    } else {
+      initNibolRotator();
+    }
+  })();
+  </script>
 </body>
 
 </html>
